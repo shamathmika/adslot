@@ -1,5 +1,4 @@
 import css from './player.css?inline';
-import Hls from 'hls.js';
 
 export interface Creative {
   id: string; advertiser: string; headline: string; body: string; cta: string; clickUrl: string;
@@ -26,12 +25,14 @@ export function mountPlayer(frame: HTMLElement, c: Creative, base: string, track
   const saveData = !!conn?.saveData;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const autoplay = !saveData && !reducedMotion;
+  // Autoplay shows the poster for a moment, so a 4KB one is enough. Full poster only when it sits at rest.
+  const poster = autoplay || saveData ? c.posterLo : c.poster;
 
   const root = frame.attachShadow({ mode: 'open' });
   root.innerHTML = `<style>${css}</style>
 <div class="as" role="region" aria-label="Sponsored video from ${esc(c.advertiser)}">
   <div class="media">
-    <video playsinline muted preload="none" crossorigin="anonymous" poster="${url(c.poster)}">
+    <video playsinline muted preload="none" crossorigin="anonymous" poster="${url(poster)}">
       <track kind="captions" srclang="en" label="English" src="${url(c.captions)}" default>
     </video>
     <span class="badge">Sponsored</span>
@@ -75,11 +76,15 @@ export function mountPlayer(frame: HTMLElement, c: Creative, base: string, track
     const src = url(c.hls);
     if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = src; // Safari: native HLS, no hls.js
-    } else if (Hls.isSupported()) {
-      // ponytail: short buffer, an ad shouldn't hoard the host page's bandwidth.
-      const hls = new Hls({ capLevelToPlayerSize: true, maxBufferLength: 8 });
-      hls.loadSource(src);
-      hls.attachMedia(video);
+    } else {
+      // Only browsers without native HLS pay for hls.js. Light build: no EME, subtitles or alt audio.
+      import('hls.js/light').then(({ default: Hls }) => {
+        if (!Hls.isSupported()) return;
+        // ponytail: short buffer, an ad shouldn't hoard the host page's bandwidth.
+        const hls = new Hls({ capLevelToPlayerSize: true, maxBufferLength: 8 });
+        hls.loadSource(src);
+        hls.attachMedia(video);
+      });
     }
     video.preload = 'auto';
   }

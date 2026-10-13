@@ -1,4 +1,4 @@
-import { mountPlayer, type Creative, type Player } from './player';
+import type { Creative, Player } from './player';
 
 /*
  * Loader. Finds slots, waits until each is near the viewport, then mounts the player.
@@ -14,9 +14,12 @@ const slots = new Map<Element, Slot>();
 
 function beacon(slot: Slot, name: string) {
   slot.el.dispatchEvent(new CustomEvent('adslot:event', { detail: { name }, bubbles: true }));
-  const origin = new URL(import.meta.url).origin;
-  fetch(`${origin}/beacon?e=${name}&t=${Date.now()}`, { method: 'POST', keepalive: true, mode: 'no-cors' });
+  const url = `${BEACON}?e=${name}&t=${Date.now()}`;
+  // Analytics never compete with the first video segments or the host's own work.
+  idle(() => navigator.sendBeacon(url));
 }
+const BEACON = new URL('/beacon', import.meta.url).href;
+const idle = (fn: () => void) => ('requestIdleCallback' in window ? requestIdleCallback(fn, { timeout: 2000 }) : setTimeout(fn, 200));
 
 // One observer for every slot: viewability is just a ratio + a timer per slot.
 const viewObserver = new IntersectionObserver(entries => {
@@ -48,7 +51,11 @@ const nearObserver = new IntersectionObserver(entries => {
 async function load(s: Slot) {
   performance.mark('adslot:near');
   const src = new URL(s.el.dataset.adslotSrc!, location.href).href;
-  const creative: Creative = await (await fetch(src)).json();
+  // Player code and creative load in parallel, and only now that the slot is near.
+  const [{ mountPlayer }, creative] = await Promise.all([
+    import('./player'),
+    fetch(src).then(r => r.json() as Promise<Creative>),
+  ]);
   const frame = s.el.querySelector<HTMLElement>('.adslot__frame') ?? s.el;
   s.player = mountPlayer(frame, creative, src, name => beacon(s, name));
   beacon(s, 'impression');
