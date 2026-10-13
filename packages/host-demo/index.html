@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trailblaze Runner X — Shop</title>
+  <link rel="preload" as="image" href="/img/hero.jpg" fetchpriority="high" />
+  <script>
+    // The ad team's embed tag. `?ad=0` is the clean baseline the bench compares against.
+    window.ADSLOT_ON = new URLSearchParams(location.search).get('ad') !== '0';
+    window.ADSLOT_ORIGIN = location.protocol + '//' + location.hostname + ':4174';
+    if (window.ADSLOT_ON) {
+      var s = document.createElement('script');
+      s.type = 'module';
+      s.src = window.ADSLOT_ORIGIN + '/adslot.js';
+      document.head.appendChild(s);
+    }
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

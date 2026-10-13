@@ -1,0 +1,8 @@
+{
+  "name": "adslot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": { "build": "tsc --noEmit && vite build" },
+  "dependencies": { "hls.js": "^1.7.3" }
+}

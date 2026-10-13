@@ -1,0 +1,19 @@
+{
+  "name": "adslot-monorepo",
+  "private": true,
+  "type": "module",
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "media": "sh bench/make-media.sh",
+    "build": "npm run build -w adslot && npm run build -w host-demo",
+    "serve": "node bench/serve.js",
+    "bench": "node bench/run.js",
+    "gate": "node bench/gate.js"
+  },
+  "devDependencies": {
+    "playwright": "1.64.0",
+    "typescript": "^5.9.0",
+    "vite": "^8.3.4",
+    "web-vitals": "^6.2.3"
+  }
+}

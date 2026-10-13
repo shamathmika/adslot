@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AdSlot layouts</title>
+  <script type="module">
+    import '../adslot/src/embed.css';
+    const o = location.protocol + '//' + location.hostname + ':4174';
+    for (const el of document.querySelectorAll('[data-adslot-src]')) el.dataset.adslotSrc = o + el.dataset.adslotSrc;
+    const s = document.createElement('script'); s.type = 'module'; s.src = o + '/adslot.js'; document.head.appendChild(s);
+  </script>
+  <style>
+    body { font: 16px/1.4 system-ui, sans-serif; margin: 24px; display: grid; gap: 32px; }
+    section > h2 { font-size: 14px; margin: 0 0 8px; }
+  </style>
+</head>
+<body>
+  <h1>Same creative, three containers</h1>
+  <section style="max-width: 860px"><h2>Wide inline (860px container)</h2>
+    <div class="adslot" data-adslot-src="/creative/creative.json"><div class="adslot__frame"></div></div></section>
+  <section style="max-width: 420px"><h2>Mobile full-width (420px container)</h2>
+    <div class="adslot" data-adslot-src="/creative/creative.json"><div class="adslot__frame"></div></div></section>
+  <section style="max-width: 300px"><h2>Narrow sidebar (300px container)</h2>
+    <div class="adslot" data-adslot-src="/creative/creative.json"><div class="adslot__frame"></div></div></section>
+</body>
+</html>
