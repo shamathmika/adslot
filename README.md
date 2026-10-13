@@ -92,7 +92,7 @@ The remaining +12 ms LCP looked like the loader request competing with the hero.
 
 The v1 build fails it on LCP (+2936 ms) and bytes (176 KB). The branch `regress/drop-slot-reservation` deliberately removes the reserved height from `embed.css`. The gate fails it on CLS (0.112, [regression.json](bench/results/regression.json)), and restoring the reservation brings it back to 0.
 
-<!-- TODO: link the PR with the red check once pushed -->
+Proof: [PR #1](https://github.com/shamathmika/adslot/pull/1). The check is red on the regression commit and green after the fix.
 
 ## How to run
 
