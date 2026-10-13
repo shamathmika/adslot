@@ -5,4 +5,6 @@
  * Breakpoints must match player.css.
  */
 .adslot { container-type: inline-size; display: block; margin: 24px 0; }
-.adslot__frame { min-height: 0; } /* REGRESSION: no reserved height */
+.adslot__frame { height: calc(100cqw * 9 / 16 + 64px); }               /* mobile full-width */
+@container (min-width: 560px) { .adslot__frame { height: calc(100cqw * 9 / 25); } } /* wide inline */
+@container (max-width: 319px) { .adslot__frame { height: calc(100cqw + 112px); } } /* narrow sidebar */
